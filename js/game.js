@@ -1,13 +1,14 @@
 
+const games = [];
 
 function insertLifeGame(){
 
     const setup = function(){
-        this.grid = new Grid(new Vector2D(10, 10), 50);
+        this.grid = new Grid(new Vector2D(25, 25), 20);
     }
 
     const update = function(){
-        
+        this.grid.update();
     }
 
     const draw = function(){
@@ -19,7 +20,15 @@ function insertLifeGame(){
         this.grid.onClick(pos);
     }
 
-    new Game(new Vector2D(500, 500), 50, setup, update, draw, onClick, "simple-life");
+    games.push(new Game(new Vector2D(500, 500), 50, 5, setup, update, draw, onClick, "simple-life"));
+}
+
+function toggleGameOne(){
+    const game = games[0];
+    game.playing = !game.playing;
+    if (game.playing) game.setInterval(game.playFps);
+    else game.setInterval(game.pauseFps);
+    game.grid.togglePlaying();
 }
 
 
@@ -28,10 +37,12 @@ class Game {
 
     static count = 1;
 
-    constructor(size, fps, setup, update, draw, onClick, containerId){
-        const self = this;
+    constructor(size, pauseFps, playFps, setup, update, draw, onClick, containerId){
         this.id = Game.count++;
         this.size = size;
+        this.playing = false;
+        this.pauseFps = pauseFps;
+        this.playFps = playFps;
         this.canvas = document.createElement("canvas");
         this.canvas.width = size.x;
         this.canvas.height = size.y;
@@ -49,7 +60,13 @@ class Game {
         this.setup();
         
         // Set frame rate:
-        if (fps > 0) this.interval = setInterval(function(){ self.tick(self) }, 1000 / fps);        
+        this.setInterval(pauseFps); 
+    }
+
+    setInterval(fps){
+        const self = this;
+        if (this.interval !== undefined) clearInterval(this.interval);
+        if (fps > 0) this.interval = setInterval(function(){ self.tick(self) }, 1000 / fps); 
     }
 
     initEventListeners(){
