@@ -3,34 +3,38 @@ const games = [];
 
 function insertLifeGame(){
 
-    const setup = function(){
-        this.grid = new Grid(new Vector2D(25, 25), 20);
-    }
+    for (let i = 0; i < 2; i++){
+        const setup = function(){
+            this.grid = new Grid(new Vector2D(25, 25), 20, (i == 0)? Grid.RuleSet.SIMPLE_LIFE : Grid.RuleSet.COMPLEX_LIFE);
+        }
 
-    const update = function(){
-        this.grid.update();
-    }
+        const update = function(){
+            this.grid.update();
+        }
 
-    const draw = function(){
-        this.grid.draw(this.context);
-    }
+        const draw = function(){
+            this.grid.draw(this.context);
+        }
 
-    const onClick = function(x, y){
-        const pos = new Vector2D(x, y);
-        this.grid.onClick(pos);
-    }
+        const onClick = function(x, y){
+            const pos = new Vector2D(x, y);
+            this.grid.onClick(pos);
+        }
 
-    games.push(new Game(new Vector2D(500, 500), 50, 5, setup, update, draw, onClick, "simple-life"));
+        games.push(new Game(new Vector2D(500, 500), 50, 5, setup, update, draw, onClick, (i == 0)? "simple-life" : "complex-life"));
+    }
 }
 
-function toggleGameOne(){
-    const game = games[0];
+function toggleGameOne(){ toggleGame(0); }
+function toggleGameTwo(){ toggleGame(1); }
+
+function toggleGame(index){
+    const game = games[index];
     game.playing = !game.playing;
     if (game.playing) game.setInterval(game.playFps);
     else game.setInterval(game.pauseFps);
     game.grid.togglePlaying();
 }
-
 
 
 class Game {

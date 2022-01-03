@@ -79,6 +79,10 @@ function randInt(min, max){
     return Math.floor(rand(min, max));
 }
 
+function restrict(value, minBound, maxBound){
+    return min(maxBound, max(minBound, value));
+}
+
 // Vector2D:
 
 class Vector2D {
